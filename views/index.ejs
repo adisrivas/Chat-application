@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+    <title>LetsChat</title>
+</head>
+<body>
+    <a href="/logout">Logout</a>
+    <ul>
+        <% connections.forEach((connect) => { %>
+            <% if(username != connect.username) { %>
+        <li> <a  href="" onclick=selected(<%= connect.id %>)><%= connect.username %></a> </li>
+        <% }    %>
+        <%  })  %>
+    </ul>
+    <div class="container">
+        <div class="msg-div">
+            <ul id="msg-block">
+            </ul>
+        </div>
+        <div class="form-div">
+        <form action="">
+            <input id="msg-written" cols="50" rows="5"></input>
+            <button>Send</button>
+        </form>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    let socket = io();
+    let loggedUser = "<%= username %>";
+    let optSelected = []; 
+    
+    function selected(id) {
+        optSelected.push(id);
+        $("#msg-block").empty();
+    }
+    $('form').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      socket.emit('private-msg', {id: optSelected.pop(), username: loggedUser, msg: $("#msg-written").val()}); //problem id not caught.
+      $("#msg-written").val('');
+      return false;
+    });
+    socket.on('deliver', (data) => {
+        $("#msg-block").append('<li><b>'+data.username+':</b> '+data.msg);    
+    });
+    </script>
+</body>
+</html>
