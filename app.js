@@ -1,9 +1,8 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
-import userRoutes from './routes/userRoutes';
-import auth from './middlewares/userAuth'
-
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const userRoutes = require('./routes/userRoutes');
+const auth = require('./middlewares/userAuth');
 
 const app = express();
 const server = require('http').createServer(app);
@@ -11,20 +10,17 @@ const io = require('socket.io').listen(server);
 
 require('dotenv').config()
 
+app.set('view engine', 'ejs');
 app.set(express.static('public'));
-
+app.use(express.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.set(userRoutes);
 
-let userDetails = require('./public/models/userSchema.js');
-let tempUsername;
-app.use(bodyParser.urlencoded({extended: true}));
-app.set('view engine', 'ejs');
 const PORT = process.env.PORT;
 
 mongoose.connect('mongodb://localhost/LetsChatDB',
   { useNewUrlParser: true, useUnifiedTopology: true });
 
-let connections = [];
 
 app.get('*', (req,res) => {
     res.json({
