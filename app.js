@@ -3,11 +3,7 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 const bodyParser = require('body-parser');
-const passport = require('passport');
 const mongoose = require('mongoose');
-const localStrategy = require('passport-local').Strategy;
-const passportLocalMongoose = require('passport-local-mongoose');
-const connectEnsureLogin = require('connect-ensure-login');
 
 app.set(express.static('public'));
 
@@ -15,20 +11,13 @@ let userDetails = require('./public/models/userSchema.js');
 let tempUsername;
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
-app.use(require('express-session')({ secret: 'key secret', resave: true, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 
-passport.use(userDetails.createStrategy());
+require('dotenv').config()
 
 mongoose.connect('mongodb://localhost/LetsChatDB',
   { useNewUrlParser: true, useUnifiedTopology: true });
 
 let connections = [];
-
-passport.serializeUser(userDetails.serializeUser());
-
-passport.deserializeUser(userDetails.deserializeUser());
 
 app.get('/user/:name', connectEnsureLogin.ensureLoggedIn('/login'),
 (req,res) => {
