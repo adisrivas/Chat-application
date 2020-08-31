@@ -1,6 +1,4 @@
-# LetsChat-chat-application    
-
-#### LetsChat is a chat application.    
+# Chat-application    
 
 - Server side is implemented using Node.js.
 - MongoDB is used for database.
