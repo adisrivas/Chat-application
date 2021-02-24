@@ -1,26 +1,17 @@
 const express = require('express');
-// const createToken = require('../middlewares/userAuth').createToken;
-// const decodeToken = require('../middlewares/userAuth').decodeToken;
-const app = express();
+const router = express.Router();
+const UserController = require('../controllers/UserController');
+const verifyUser = require('../middlewares/verifyUser');
 
-app.get('/user/:name', verifyUser, (req,res) => {
-   //chat page
-});
-
-app.get('/signup', (req,res) => {
+router.get('/user/:name', verifyUser, UserController.userHomepage);
+router.get('/signup', (req,res) => {
     res.render('signup');
-})
-
-app.post('/signup', (req,res) => {  
 });
-
-app.get('/login', (req,res) => {
+router.post('/signup', UserController.signupUser);
+router.get('/login', (req,res) => {
     res.render('login');
 });
+router.post('/login', UserController.loginUser);
+router.get('/logout', UserController.logoutUser);
 
-app.post('/login', (req, res, next) => {
-  });
-
-app.get('/logout', (req,res) => {
-    res.redirect('/login');
-});
+module.exports = router;
